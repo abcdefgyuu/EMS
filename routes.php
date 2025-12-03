@@ -13,7 +13,10 @@ $router->get('/leave', 'controllers/leave/index.php');
 //$router->delete('/note', 'controllers/notes/destroy.php');
 //
 $router->get('/employees/create', 'controllers/employees/create.php');
-  $router->post('/employees', 'controllers/employees/store.php');
+$router->post('/employees', 'controllers/employees/store.php');
+$router->get('/employees/edit', 'controllers/employees/edit.php');
+$router->patch('/employees', 'controllers/employees/update.php');
+$router->delete('/employees', 'controllers/employees/destroy.php');
 //
 //$router->get('/notes/edit', 'controllers/notes/edit.php');
 //$router->patch('/note', 'controllers/notes/update.php');
