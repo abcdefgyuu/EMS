@@ -54,7 +54,12 @@ $db->query("UPDATE employees SET employee_code = :code WHERE employee_id = :id",
 ]);
 
 $_SESSION['success'] = "Employee inserted successfully";
-header('Location: /employees');
+// header('Location: /employees/user_data?id=' . $lastEmployeeId);
+view('employees/user_data.view.php', [
+  "heading" => "Login Information",
+  "employee_email" => $_POST['email'],
+  "employee_code" => $employee_code,
+]);
 exit;
 
 
