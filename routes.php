@@ -13,9 +13,9 @@ $router->get('/leave', 'controllers/leave/index.php');
 //$router->delete('/note', 'controllers/notes/destroy.php');
 //
 $router->get('/employees/create', 'controllers/employees/create.php');
-$router->get('/employees/user_data', 'controllers/employees/user_data.php');
+$router->get('/employees/registration', 'controllers/registration/create.php');
 $router->post('/employees', 'controllers/employees/store.php');
-$router->post('/employees/data_store', 'controllers/employees/data_store.php');
+$router->post('/employees/registration', 'controllers/registration/store.php');
 $router->get('/employees/edit', 'controllers/employees/edit.php');
 $router->patch('/employees', 'controllers/employees/update.php');
 $router->delete('/employees', 'controllers/employees/destroy.php');
@@ -31,3 +31,6 @@ $router->delete('/employees', 'controllers/employees/destroy.php');
 //$router->get('/login', 'controllers/sessions/create.php')->only('guest');
 //$router->post('/sessions', 'controllers/sessions/store.php')->only('guest');
 //$router->delete('/sessions', 'controllers/sessions/destroy.php')->only('auth');
+
+$router->post('/', 'controllers/sessions/store.php');
+$router->delete('/sessions', 'controllers/sessions/destroy.php')->only('auth');

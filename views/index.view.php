@@ -9,15 +9,18 @@
         <h2 class="text-3xl font-bold text-gray-800 mt-2">Welcome Back</h2>
         <p class="text-sm text-gray-500">Please sign in to your account</p>
       </div>
-      <form class="space-y-5">
+      <form action="/" method="POST" class="space-y-5">
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-          <input type="email" id="email" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="you@example.com" required />
+          <label for="code" class="block text-sm font-medium text-gray-700">Employee Code</label>
+          <input type="text" id="code" name="code" value="<?= htmlspecialchars($_POST['code'] ?? '') ?>" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="E-0000" required />
         </div>
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-          <input type="password" id="password" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="••••••••" required />
+          <input type="password" id="password" name="password" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="••••••••" required />
         </div>
+        <?php if (!empty($errors['login'])): ?>
+          <p class="text-red-600 text-sm mt-1"><?= $errors['login'] ?></p>
+        <?php endif; ?>
 
         <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200">Sign In</button>
       </form>
