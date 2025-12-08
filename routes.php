@@ -1,8 +1,8 @@
 <?php
 
 $router->get('/', 'controllers/index.php');
-$router->get('/dashboard', 'controllers/dashboard.php');
-$router->get('/employees', 'controllers/employees/index.php');
+$router->get('/dashboard', 'controllers/dashboard.php')->only('auth');
+$router->get('/employees', 'controllers/employees/index.php')->only('auth');
 $router->get('/attendance', 'controllers/attendance/index.php');
 $router->get('/leave', 'controllers/leave/index.php');
 //$router->get('/about', 'controllers/about.php');
@@ -34,3 +34,5 @@ $router->delete('/employees', 'controllers/employees/destroy.php');
 
 $router->post('/', 'controllers/sessions/store.php');
 $router->delete('/sessions', 'controllers/sessions/destroy.php')->only('auth');
+
+$router->get('/profile', 'controllers/profile/show.php')->only('auth');
