@@ -39,6 +39,7 @@ if ($user) {
     
     login([
       'code' => $code,
+      'id' => $user_info['employee_id'],
       'username' => $user_info['name'],
       'role' => $user['role']
     ]);
