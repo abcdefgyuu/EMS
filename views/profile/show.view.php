@@ -136,14 +136,6 @@
                   <span class="text-gray-900"><?= htmlspecialchars($profile['graduate_degree'] ?? '—') ?></span>
                 </div>
               </div>
-              <div class="md:col-span-2">
-                <div class="flex justify-between py-3">
-                  <span class="font-medium text-gray-600">IQ Test Score</span>
-                  <span class="text-gray-900">
-                    <?= $profile['iq_test_mark'] !== null ? $profile['iq_test_mark'] . ' / 100' : '<span class="text-gray-500 italic">Not taken</span>' ?>
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
 
