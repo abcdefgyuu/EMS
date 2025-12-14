@@ -36,3 +36,5 @@ $router->post('/', 'controllers/sessions/store.php');
 $router->delete('/sessions', 'controllers/sessions/destroy.php')->only('auth');
 
 $router->get('/profile', 'controllers/profile/show.php')->only('auth');
+
+$router->post('/attendance', 'controllers/attendance/store.php');

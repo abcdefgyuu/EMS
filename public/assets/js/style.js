@@ -6,7 +6,7 @@ $(document).ready(function () {
 
 
 $(window).on('load', function () {
-  const toast = $('.toast-success');
+  const toast = $('.toast-success, .dup-att');
 
   if (toast.length) {
     toast.fadeIn(300); // optional: fade in smoothly

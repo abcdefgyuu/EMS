@@ -7,6 +7,9 @@
     <div class="inner">
       <h2 class="text-2xl font-bold text-center mb-6">Attendance</h2>
 
+      <?php if (!empty($errors['duplicate_attendance'])): ?>
+        <p class="text-red-600 text-sm mt-1 text-right pr-2 mb-4 dup-att"><?= $errors['duplicate_attendance'] ?></p>
+      <?php endif; ?>
       <!-- Attendance Form Card -->
       <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
         <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
@@ -14,7 +17,7 @@
         </div>
 
         <div class="p-6 md:p-8">
-          <form id="attendanceForm" class="space-y-6">
+          <form action="/attendance" id="attendanceForm" class="space-y-6" method="POST">
             <!-- Employee Info -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 rounded-xl p-5">
               <div class="flex items-center space-x-3">
@@ -40,7 +43,7 @@
                 Location Status <span class="text-red-500">*</span>
               </label>
               <div class="md:col-span-2">
-                <select id="status" required
+                <select id="status" required name="location"
                   class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition duration-200 text-gray-700">
                   <option value="">-- Select Location --</option>
                   <option value="Office">Office</option>
@@ -125,6 +128,11 @@
           </table>
         </div>
       </div>
+
+      <?php if (!empty($_SESSION["success"])): ?>
+        <div class="toast-success"><?= $_SESSION["success"] ?></div>
+        <?php unset($_SESSION["success"]); ?>
+      <?php endif; ?>
 
     </div>
 </main>
