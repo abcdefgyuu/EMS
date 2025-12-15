@@ -2,6 +2,8 @@
 session_start();
 const BASE_PATH = __DIR__ . '/../';
 
+date_default_timezone_set('Asia/Yangon');
+
 require BASE_PATH . 'Core/functions.php';
 //require  base_path('Database.php');  //db first
 
