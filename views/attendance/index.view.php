@@ -79,51 +79,46 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2025-12-10</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">John Doe</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                    Office
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    <i class="fas fa-check mr-1"></i> Present
-                  </span>
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2025-12-09</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">John Doe</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">
-                    Work from Home
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    <i class="fas fa-check mr-1"></i> Present
-                  </span>
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2025-12-08</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">John Doe</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                    Office
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    <i class="fas fa-check mr-1"></i> Present
-                  </span>
-                </td>
-              </tr>
+              <?php
+                // Select source rows: admins see allAttendances, others see their own $attendances
+                $source = (isset($_SESSION['user']['role']) && strtolower($_SESSION['user']['role']) === 'admin') ? ($allAttendances ?? []) : ($attendances ?? []);
+
+                // Normalize $source into an array of rows (handle single row or none)
+                $rows = [];
+                if (!empty($source)) {
+                  if (array_values($source) === $source) {
+                    $rows = $source; // already indexed array
+                  } else {
+                    $rows = [$source];
+                  }
+                }
+
+                if (empty($rows)) {
+                  echo '<tr><td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No attendance history found.</td></tr>';
+                } else {
+                  $i = 1;
+                  foreach ($rows as $row) {
+                    $date = htmlspecialchars($row['attendance_date'] ?? $row['date'] ?? '');
+                    // For admins show employee identifier, for others show logged-in username
+                    if (isset($_SESSION['user']['role']) && strtolower($_SESSION['user']['role']) === 'admin') {
+                      $name = htmlspecialchars($row['name']);
+                    } else {
+                      $name = htmlspecialchars($_SESSION['user']['username']);
+                    }
+                    $location = htmlspecialchars($row['status'] ?? $row['location'] ?? '—');
+                    $type = $row['type'] ?? '';
+                    $typeBadge = ($type === 'Late') ? '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"><i class="fas fa-exclamation-triangle mr-1"></i> Late</span>' : '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"><i class="fas fa-check mr-1"></i> Present</span>';
+                    echo "<tr class=\"hover:bg-gray-50 transition\">";
+                    echo "<td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-900\">{$i}</td>";
+                    echo "<td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-900\">{$date}</td>";
+                    echo "<td class=\"px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900\">{$name}</td>";
+                    echo "<td class=\"px-6 py-4 whitespace-nowrap\"><span class=\"px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800\">{$location}</span></td>";
+                    echo "<td class=\"px-6 py-4 whitespace-nowrap\">{$typeBadge}</td>";
+                    echo "</tr>";
+                    $i++;
+                  }
+                }
+              ?>
             </tbody>
           </table>
         </div>

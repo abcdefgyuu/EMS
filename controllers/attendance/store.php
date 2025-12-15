@@ -3,6 +3,14 @@ use Core\Database;
 
 $db = new Database();
 
+$id = $_SESSION['user']['id'];
+$attendances = $db->query(
+  "SELECT * FROM attendance where employee_id=:id",
+  [
+    'id' => $id
+  ]
+)->getAll();
+
 // --- Setup Variables ---
 // Current time in H:i:s format (e.g., '08:06:30')
 $current_time = date('H:i:s');
@@ -23,23 +31,22 @@ if ($current_time > $cutoff_time) {
 // --- 1. PRE-CHECK FOR DUPLICATE ENTRY ---
 // Use a SELECT query to see if a record already exists for this employee and date
 try {
-    $sql_check = "SELECT COUNT(*) FROM attendance 
+    $sql_check = "SELECT COUNT(*) AS total_count FROM attendance 
                   WHERE employee_id = :employee_id AND attendance_date = :attendance_date";
 
-    // Assuming your $db->query returns a result object or array for SELECT
     $result = $db->query($sql_check, [
         'employee_id' => $employee_id,
         'attendance_date' => $current_date
     ]);
-    
-    // You might need to adjust this line based on how your database wrapper works:
-    // Common alternatives: $count = $result->fetchColumn(); or $count = $result[0]['COUNT(*)'];
-    $count = $result->find(); 
+
+    $row = $result->find();
+    $count = intval($row['total_count'] ?? $row['COUNT(*)'] ?? 0);
 
     if ($count > 0) {
        $errors['duplicate_attendance'] = "Attendance for today has already been recorded.";
        view('attendance/index.view.php', [
            "heading" => "Attendance",
+           "attendances"=>$attendances,
            "errors" => $errors
        ]);
        exit();
@@ -66,6 +73,8 @@ try {
     );
 
     $_SESSION['success'] = "Attendance submitted successfully.";
+    header('Location: /attendance');
+    exit();
 
 } catch (Exception $e) {
     // This catches *other* database errors (like permission issues, server down, etc.)
