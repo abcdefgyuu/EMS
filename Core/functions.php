@@ -1,6 +1,7 @@
 <?php
 
 use Core\Response;
+use Core\Database;
 
 function dd($value)
 {
@@ -42,6 +43,7 @@ function login($user)
   $_SESSION['user'] = [
     'id' => $user['id'],
     'username' => $user['username'],
+    'emp_code' => $user['emp_code'],
     'role' => $user['role']
   ];
 }
@@ -52,4 +54,17 @@ function logout()
   session_destroy();
   header('Location: /');
   exit();
+}
+
+function pending_count()
+{
+  if (empty($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'Admin') {
+    return 0;
+  }
+
+  $db = new Database();
+  $row = $db->query("SELECT COUNT(*) AS count FROM leave_requests WHERE status = 'Pending'")
+    ->find();
+
+  return (int)($row['count'] ?? 0);
 }

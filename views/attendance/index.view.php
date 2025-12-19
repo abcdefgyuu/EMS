@@ -6,7 +6,6 @@
   <div class="bg-neutral-100 pt-24 min-h-screen pb-20">
     <div class="inner">
       <h2 class="text-2xl font-bold text-center mb-6">Attendance</h2>
-
       <?php if (!empty($errors['duplicate_attendance'])): ?>
         <p class="text-red-600 text-sm mt-1 text-right pr-2 mb-4 dup-att"><?= $errors['duplicate_attendance'] ?></p>
       <?php endif; ?>
@@ -24,7 +23,7 @@
                 <i class="fas fa-id-badge text-indigo-600 text-xl"></i>
                 <div>
                   <p class="text-sm text-gray-500">Employee Code</p>
-                  <p class="font-semibold text-gray-800"><?= $_SESSION['user']['code'] ?></p>
+                  <p class="font-semibold text-gray-800"><?= $_SESSION['user']['emp_code'] ?></p>
                 </div>
               </div>
               <div class="flex items-center space-x-3">
