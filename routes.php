@@ -41,3 +41,4 @@ $router->get('/profile', 'controllers/profile/show.php')->only('auth');
 $router->post('/attendance', 'controllers/attendance/store.php');
 
 $router->post('/leave', 'controllers/leave/store.php');
+$router->post('/leave/approve', 'controllers/admin/leave/approve.php');
