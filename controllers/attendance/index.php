@@ -14,6 +14,7 @@ $allAttendances = $db->query(
   "SELECT attendance.*, employees.name
    FROM attendance
    LEFT JOIN employees ON attendance.employee_id = employees.employee_id
+   WHERE attendance_date <= CURDATE()
    ORDER BY attendance_date DESC"
 )->getAll();
 
