@@ -87,6 +87,12 @@
               Your Profile
             </a>
 
+            <a href="/reset-password"
+              class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">
+              <i class="fas fa-user text-indigo-600"></i>
+              Reset Password
+            </a>
+
             <form method="POST" action="/sessions" class="w-full">
               <input type="hidden" name="_method" value="DELETE">
               <button type="submit"

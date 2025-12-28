@@ -178,7 +178,7 @@ try {
     $db->query(
       "INSERT IGNORE INTO attendance 
              (employee_id, attendance_date, type, status, leave_request_id)
-             VALUES (:employee_id, :attendance_date, 'Office', 'Leave', :request_id)",
+             VALUES (:employee_id, :attendance_date, 'Leave', 'Leave', :request_id)",
       [
         'employee_id'     => $employee_id,
         'attendance_date' => $date,
