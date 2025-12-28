@@ -63,200 +63,170 @@
         </div>
       </div>
 
-      <!-- Attendance History Table -->
-      <div class="mt-10 overflow-hidden">
-        <h2 class="text-lg font-semibold text-indigo-500 mb-3">Attendance History</h2>
-        <div class="overflow-x-auto">
+      <!-- Attendance History Section -->
+      <div class="mt-10">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Attendance History</h2>
+
+          <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+            <!-- Search Input -->
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="searchName"
+                value="<?= htmlspecialchars($search ?? '') ?>"
+                class="block w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                placeholder="Search by name..." />
+            </div>
+
+            <!-- Date Filter -->
+            <input
+              type="date"
+              id="dateFilter"
+              value="<?= htmlspecialchars($date ?? '') ?>"
+              class="px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+
+            <!-- Reset Button -->
+            <button id="resetFilters" class="px-4 py-2.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg">
           <table class="w-full">
-            <thead class="bg-gray-50 border-b border-gray-200">
+            <thead class="bg-gradient-to-r from-indigo-600 to-purple-600">
               <tr>
-                <th class="px-6 py-4 text-center text-xs font-medium text-white uppercase tracking-wider">No.</th>
-                <th class="px-6 py-4 text-center text-xs font-medium text-white uppercase tracking-wider">Date</th>
-                <th class="px-6 py-4 text-center text-xs font-medium text-white uppercase tracking-wider">Name</th>
-                <th class="px-6 py-4 text-center text-xs font-medium text-white uppercase tracking-wider">Location</th>
-                <th class="px-6 py-4 text-center text-xs font-medium text-white uppercase tracking-wider">Status</th>
+                <th class="py-4 text-center text-xs font-medium text-white uppercase tracking-wider">No.</th>
+                <th class="py-4 text-center text-xs font-medium text-white uppercase tracking-wider">Date</th>
+                <th class="py-4 text-center text-xs font-medium text-white uppercase tracking-wider">Name</th>
+                <th class="py-4 text-center text-xs font-medium text-white uppercase tracking-wider">Status</th>
+                <th class="py-4 text-center text-xs font-medium text-white uppercase tracking-wider">Location</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
-              <?php
-              // Select source rows: admins see allAttendances, others see their own $attendances
-              $source = (isset($_SESSION['user']['role']) && strtolower($_SESSION['user']['role']) === 'admin') ? ($allAttendances ?? []) : ($attendances ?? []);
-
-              // Normalize $source into an array of rows (handle single row or none)
-              $rows = [];
-              if (!empty($source)) {
-                if (array_values($source) === $source) {
-                  $rows = $source; // already indexed array
-                } else {
-                  $rows = [$source];
-                }
-              }
-
-              if (empty($rows)) {
-                echo '<tr><td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No attendance history found.</td></tr>';
-              } else {
-                $i = 1;
-                foreach ($rows as $row) {
-                  $date = htmlspecialchars($row['attendance_date'] ?? $row['date'] ?? '');
-                  // For admins show employee identifier, for others show logged-in username
-                  if (isset($_SESSION['user']['role']) && strtolower($_SESSION['user']['role']) === 'admin') {
-                    $name = htmlspecialchars($row['name']);
-                  } else {
-                    $name = htmlspecialchars($_SESSION['user']['username']);
-                  }
-                  $location = htmlspecialchars($row['status'] ?? $row['location'] ?? '—');
-                  $type = htmlspecialchars($row['type'] ?? '');
-                  if ($type === 'Late') {
-                    $typeBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"><i class="fas fa-exclamation-triangle mr-1"></i> Late</span>';
-                  } elseif ($type === 'Absent') {
-                    $typeBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800"><i class="fas fa-user-times mr-1"></i> Absent</span>';
-                  } elseif ($type === 'Leave') {
-                    $typeBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800"><i class="fas fa-user-times mr-1"></i> Leave</span>';
-                  } else {
-                    $typeBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"><i class="fas fa-check mr-1"></i> Present</span>';
-                  }
-                  echo "<tr class=\"hover:bg-gray-50 transition\">";
-                  echo "<td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-900\">{$i}</td>";
-                  echo "<td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-900\">{$date}</td>";
-                  echo "<td class=\"px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900\">{$name}</td>";
-                  echo "<td class=\"px-6 py-4 whitespace-nowrap\"><span class=\"px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800\">{$location}</span></td>";
-                  echo "<td class=\"px-6 py-4 whitespace-nowrap\">{$typeBadge}</td>";
-                  echo "</tr>";
-                  $i++;
-                }
-              ?>
-                <tr id="paginationRow">
-                  <td colspan="5" class="px-6 py-4 text-center">
-                    <div id="paginationControls" class="inline-flex items-center space-x-2"></div>
-                  </td>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+              <?php if (empty($attendances)): ?>
+                <tr>
+                  <td colspan="5" class="px-6 py-8 text-center text-gray-500">No attendance records found.</td>
                 </tr>
-
-                <script>
-                  (function() {
-                    function initPagination() {
-                      var perPage = 10;
-                      var $table = $('table').last();
-                      var $rows = $table.find('tbody tr').not('#paginationRow');
-                      var totalRows = $rows.length;
-                      var totalPages = Math.ceil(totalRows / perPage);
-                      var $controls = $('#paginationControls');
-
-                      if (totalPages <= 1) {
-                        $('#paginationRow').hide();
-                        return;
-                      }
-
-                      $controls.empty();
-                      $controls.append('<button id="pagPrev" class="px-3 py-1 border rounded disabled:opacity-50">Prev</button>');
-
-                      setTimeout(function() {
-                        function renderCondensed(cur) {
-                          cur = parseInt(cur || $controls.find('.pagPage.active').data('page') || 1, 10);
-                          if (totalPages <= 7) {
-                            $controls.find('.ellipsis').remove();
-                            $controls.find('.pagPage').show();
-                            $controls.find('.pagPage').removeClass('active bg-indigo-600 text-white').attr('aria-pressed', 'false');
-                            $controls.find('.pagPage[data-page="' + cur + '"]').addClass('active bg-indigo-600 text-white').attr('aria-pressed', 'true');
-                            $('#pagPrev').prop('disabled', cur === 1);
-                            $('#pagNext').prop('disabled', cur === totalPages);
-                            return;
-                          }
-
-                          // decide pages to display
-                          var pages = [];
-                          if (cur <= 4) {
-                            pages = [1,2,3,4,5,'...', totalPages];
-                          } else if (cur >= totalPages - 3) {
-                            pages = [1,'...', totalPages-4, totalPages-3, totalPages-2, totalPages-1, totalPages];
-                          } else {
-                            pages = [1,'...', cur-1, cur, cur+1, '...', totalPages];
-                          }
-
-                          // hide all page buttons then show needed ones and insert ellipses
-                          $controls.find('.pagPage').hide();
-                          $controls.find('.ellipsis').remove();
-
-                          var lastAfter = $controls.find('#pagPrev');
-                          pages.forEach(function(p) {
-                            if (p === '...') {
-                              $('<span class="ellipsis px-3 py-1 text-sm text-gray-500">...</span>').insertAfter(lastAfter);
-                              lastAfter = lastAfter.next();
-                            } else {
-                              var $btn = $controls.find('.pagPage[data-page="' + p + '"]');
-                              if ($btn.length) {
-                                $btn.insertAfter(lastAfter).show();
-                                lastAfter = $btn;
-                              }
-                            }
-                          });
-
-                          $controls.find('.pagPage').removeClass('active bg-indigo-600 text-white').attr('aria-pressed', 'false');
-                          $controls.find('.pagPage[data-page="' + cur + '"]').addClass('active bg-indigo-600 text-white').attr('aria-pressed', 'true').show();
-                          $('#pagPrev').prop('disabled', cur === 1);
-                          $('#pagNext').prop('disabled', cur === totalPages);
-                        }
-
-                        // initial condensed render (page 1)
-                        renderCondensed(1);
-
-                        // keep condensed state in sync when users click controls
-                        $controls.on('click', '.pagPage', function() {
-                          var p = parseInt($(this).data('page'), 10);
-                          // allow other handlers (row show) to run first
-                          setTimeout(function() { renderCondensed(p); }, 0);
-                        });
-                        $controls.on('click', '#pagPrev', function() {
-                          var cur = parseInt($controls.find('.pagPage.active').data('page') || 1, 10);
-                          var next = Math.max(1, cur - 1);
-                          setTimeout(function() { renderCondensed(next); }, 0);
-                        });
-                        $controls.on('click', '#pagNext', function() {
-                          var cur = parseInt($controls.find('.pagPage.active').data('page') || 1, 10);
-                          var next = Math.min(totalPages, cur + 1);
-                          setTimeout(function() { renderCondensed(next); }, 0);
-                        });
-                      }, 0);
-                      for (var p = 1; p <= totalPages; p++) {
-                        $controls.append('<button class="pagPage px-3 py-1 border rounded" data-page="' + p + '">' + p + '</button>');
-                      }
-                      $controls.append('<button id="pagNext" class="px-3 py-1 border rounded">Next</button>');
-
-                      function showPage(page) {
-                        var start = (page - 1) * perPage;
-                        $rows.hide().slice(start, start + perPage).show();
-                        $controls.find('.pagPage').removeClass('active bg-indigo-600 text-white').attr('aria-pressed', 'false');
-                        $controls.find('.pagPage[data-page="' + page + '"]').addClass('active bg-indigo-600 text-white').attr('aria-pressed', 'true');
-                        $('#pagPrev').prop('disabled', page === 1);
-                        $('#pagNext').prop('disabled', page === totalPages);
-                      }
-
-                      $controls.on('click', '.pagPage', function() {
-                        showPage(parseInt($(this).data('page'), 10));
-                      });
-                      $controls.on('click', '#pagPrev', function() {
-                        var cur = parseInt($controls.find('.pagPage.active').data('page') || 1, 10);
-                        if (cur > 1) showPage(cur - 1);
-                      });
-                      $controls.on('click', '#pagNext', function() {
-                        var cur = parseInt($controls.find('.pagPage.active').data('page') || 1, 10);
-                        if (cur < totalPages) showPage(cur + 1);
-                      });
-
-                      showPage(1);
-                    }
-
-
-                    jQuery(initPagination);
-
-                  })();
-                </script>
-              <?php
-              }
-              ?>
+              <?php else: ?>
+                <?php foreach ($attendances as $index => $row): ?>
+                  <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300"><?= $offset + $index + 1 ?></td>
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300"><?= htmlspecialchars($row['attendance_date']) ?></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-300"><?= htmlspecialchars($row['name']) ?></td>
+                    <td class="px-6 py-4">
+                      <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                        <?= htmlspecialchars($row['status'] ?? '—') ?>
+                      </span>
+                    </td>
+                    <td class="px-6 py-4">
+                      <?php
+                      $status = $row['type'] ?? 'Present';
+                      $badgeClass = match ($status) {
+                        'Late' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                        'Absent', 'Leave' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                        default => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                      };
+                      $icon = match ($status) {
+                        'Late' => 'fa-exclamation-triangle',
+                        'Absent', 'Leave' => 'fa-user-times',
+                        default => 'fa-check'
+                      };
+                      ?>
+                      <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full <?= $badgeClass ?>">
+                        <i class="fas <?= $icon ?> mr-1"></i>
+                        <?= ucfirst($status) ?>
+                      </span>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination (Same style as Employees page) -->
+        <?php if ($totalPages > 1): ?>
+          <div class="mt-6 flex justify-center space-x-2">
+
+            <!-- Previous Button -->
+            <?php if ($currentPage > 1): ?>
+              <a href="<?= buildAttendanceUrl($currentPage - 1) ?>" class="px-3 py-1 border rounded bg-white text-indigo-600 duration-400 hover:bg-indigo-600 hover:text-white">‹</a>
+            <?php endif; ?>
+
+
+            <!-- Page Numbers -->
+            <?php
+            $maxVisible = 3;
+            for ($i = 1; $i <= $totalPages; $i++) {
+              if (
+                $i == 1 ||
+                $i == $totalPages ||
+                ($i >= $currentPage - 1 && $i <= $currentPage + 1)
+              ) {
+                echo '<a href="/attendance?page=' . $i . '" class="px-3 py-1 border rounded duration-400 ' . ($i == $currentPage ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 hover:bg-indigo-600 hover:text-white') . '">' . $i . '</a>';
+              } elseif ($i == 2 && $currentPage > 4) {
+                echo '<span class="px-3 py-1">...</span>';
+              } elseif ($i == $totalPages - 1 && $currentPage < $totalPages - 3) {
+                echo '<span class="px-3 py-1">...</span>';
+              }
+            }
+            ?>
+
+            <!-- Next Button -->
+            <?php if ($currentPage < $totalPages): ?>
+              <a href="<?= buildAttendanceUrl($currentPage + 1) ?>" class="px-3 py-1 border rounded bg-white text-indigo-600 duration-400 hover:bg-indigo-600 hover:text-white">›</a>
+            <?php endif; ?>
+          </div>
+        <?php endif; ?>
       </div>
+
+      <?php
+      // Helper function to build URL with current filters preserved
+      function buildAttendanceUrl($page = 1)
+      {
+        $params = array_filter([
+          'page' => $page > 1 ? $page : null,
+          'search' => $_GET['search'] ?? null,
+          'date' => $_GET['date'] ?? null,
+        ]);
+        return '/attendance?' . http_build_query($params);
+      }
+      ?>
+
+      <script>
+        // Shared filter application function (same logic as Employees page)
+        function applyAttendanceFilters() {
+          const search = document.getElementById('searchName').value.trim();
+          const date = document.getElementById('dateFilter').value;
+
+          const params = new URLSearchParams();
+          if (search) params.set('search', search);
+          if (date) params.set('date', date);
+          params.set('page', '1');
+
+          window.location = '/attendance?' + params.toString();
+        }
+
+        function resetAttendanceFilters() {
+          window.location = '/attendance';
+        }
+
+        // Event Listeners
+        document.getElementById('searchName').addEventListener('keyup', (e) => {
+          if (e.key === 'Enter') applyAttendanceFilters();
+        });
+
+        document.getElementById('dateFilter').addEventListener('change', applyAttendanceFilters);
+        document.getElementById('resetFilters').addEventListener('click', resetAttendanceFilters);
+      </script>
 
       <?php if (!empty($_SESSION["success"])): ?>
         <div class="toast-success"><?= $_SESSION["success"] ?></div>
