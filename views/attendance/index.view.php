@@ -152,54 +152,8 @@
           </table>
         </div>
 
-        <!-- Pagination (Same style as Employees page) -->
-        <?php if ($totalPages > 1): ?>
-          <div class="mt-6 flex justify-center space-x-2">
-
-            <!-- Previous Button -->
-            <?php if ($currentPage > 1): ?>
-              <a href="<?= buildAttendanceUrl($currentPage - 1) ?>" class="px-3 py-1 border rounded bg-white text-indigo-600 duration-400 hover:bg-indigo-600 hover:text-white">‹</a>
-            <?php endif; ?>
-
-
-            <!-- Page Numbers -->
-            <?php
-            $maxVisible = 3;
-            for ($i = 1; $i <= $totalPages; $i++) {
-              if (
-                $i == 1 ||
-                $i == $totalPages ||
-                ($i >= $currentPage - 1 && $i <= $currentPage + 1)
-              ) {
-                echo '<a href="/attendance?page=' . $i . '" class="px-3 py-1 border rounded duration-400 ' . ($i == $currentPage ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 hover:bg-indigo-600 hover:text-white') . '">' . $i . '</a>';
-              } elseif ($i == 2 && $currentPage > 4) {
-                echo '<span class="px-3 py-1">...</span>';
-              } elseif ($i == $totalPages - 1 && $currentPage < $totalPages - 3) {
-                echo '<span class="px-3 py-1">...</span>';
-              }
-            }
-            ?>
-
-            <!-- Next Button -->
-            <?php if ($currentPage < $totalPages): ?>
-              <a href="<?= buildAttendanceUrl($currentPage + 1) ?>" class="px-3 py-1 border rounded bg-white text-indigo-600 duration-400 hover:bg-indigo-600 hover:text-white">›</a>
-            <?php endif; ?>
-          </div>
-        <?php endif; ?>
+       <?php pagination($currentPage, $totalPages, '/attendance'); ?>
       </div>
-
-      <?php
-      // Helper function to build URL with current filters preserved
-      function buildAttendanceUrl($page = 1)
-      {
-        $params = array_filter([
-          'page' => $page > 1 ? $page : null,
-          'search' => $_GET['search'] ?? null,
-          'date' => $_GET['date'] ?? null,
-        ]);
-        return '/attendance?' . http_build_query($params);
-      }
-      ?>
 
       <script>
         // Shared filter application function (same logic as Employees page)

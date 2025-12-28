@@ -68,3 +68,77 @@ function pending_count()
 
   return (int)($row['count'] ?? 0);
 }
+
+function pagination($currentPage, $totalPages, $baseUrl = '')
+{
+    if ($totalPages <= 1) {
+        return;
+    }
+
+    // Preserve existing GET params except 'page'
+    $queryParams = $_GET;
+    unset($queryParams['page']);
+
+    // Build base URL with preserved filters
+    $base = $baseUrl . (empty($queryParams) ? '' : '?' . http_build_query($queryParams));
+    $base .= (empty($queryParams) ? '?' : '&');
+
+    ?>
+    <div class="mt-6 flex justify-center space-x-2">
+        <!-- Previous -->
+        <?php if ($currentPage > 1): ?>
+            <a href="<?= $base ?>page=<?= $currentPage - 1 ?>"
+               class="px-3 py-1 border rounded bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition">
+                ‹
+            </a>
+        <?php endif; ?>
+
+        <!-- Page Numbers -->
+        <?php
+        $start = max(1, $currentPage - 2);
+        $end   = min($totalPages, $start + 4);
+
+        if ($end - $start + 1 < 5) {
+            $start = max(1, $end - 4);
+        }
+
+        // First page
+        if ($start > 1): ?>
+            <a href="<?= $base ?>page=1"
+               class="px-3 py-1 border rounded bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white">
+                1
+            </a>
+            <?php if ($start > 2): ?>
+                <span class="px-3 py-2">...</span>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <!-- Visible pages -->
+        <?php for ($i = $start; $i <= $end; $i++): ?>
+            <a href="<?= $base ?>page=<?= $i ?>"
+               class="px-3 py-1 border rounded transition <?= $i === $currentPage ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white' ?>">
+                <?= $i ?>
+            </a>
+        <?php endfor; ?>
+
+        <!-- Last page -->
+        <?php if ($end < $totalPages): ?>
+            <?php if ($end < $totalPages - 1): ?>
+                <span class="px-3 py-2">...</span>
+            <?php endif; ?>
+            <a href="<?= $base ?>page=<?= $totalPages ?>"
+               class="px-3 py-1 border rounded bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white">
+                <?= $totalPages ?>
+            </a>
+        <?php endif; ?>
+
+        <!-- Next -->
+        <?php if ($currentPage < $totalPages): ?>
+            <a href="<?= $base ?>page=<?= $currentPage + 1 ?>"
+               class="px-3 py-1 border rounded bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition">
+                ›
+            </a>
+        <?php endif; ?>
+    </div>
+    <?php
+}

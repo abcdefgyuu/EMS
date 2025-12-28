@@ -108,14 +108,9 @@
       <?php unset($_SESSION["success"]); ?>
     <?php endif; ?>
 
-    <!-- Table Footer -->
-    <div class="mt-6 flex items-center justify-between text-sm text-gray-600">
-      <p>Showing 1 to 5 of 12 requests</p>
-      <div class="flex gap-2">
-        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100">Previous</button>
-        <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Next</button>
-      </div>
-    </div>
+    <?php if ($totalPages > 1): ?>
+      <?php pagination($currentPage, $totalPages, '/admin/notifications'); ?>
+    <?php endif; ?>
   </div>
 
 </div>
