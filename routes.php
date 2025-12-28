@@ -5,6 +5,7 @@ $router->get('/dashboard', 'controllers/dashboard.php')->only('auth');
 $router->get('/employees', 'controllers/employees/index.php')->only('auth');
 $router->get('/attendance', 'controllers/attendance/index.php');
 $router->get('/leave', 'controllers/leave/index.php');
+$router->get('/admin/notifications', 'controllers/admin/notifications.php');
 //$router->get('/about', 'controllers/about.php');
 //$router->get('/contact', 'controllers/contact.php');
 //
@@ -36,3 +37,10 @@ $router->post('/', 'controllers/sessions/store.php');
 $router->delete('/sessions', 'controllers/sessions/destroy.php')->only('auth');
 
 $router->get('/profile', 'controllers/profile/show.php')->only('auth');
+
+$router->post('/attendance', 'controllers/attendance/store.php');
+
+$router->post('/leave', 'controllers/leave/store.php');
+$router->post('/leave/approve', 'controllers/admin/leave/approve.php');
+
+$router->get('/reset-password', 'controllers/profile/reset.php')->only('auth');

@@ -65,4 +65,24 @@ class Database
   {
     return $this->connection->lastInsertId();
   }
+
+  // public function getPdo(): PDO
+  //   {
+  //       return $this->connection;
+  //   }
+
+  public function beginTransaction(): bool
+  {
+    return $this->connection->beginTransaction();
+  }
+
+  public function commit(): bool
+  {
+    return $this->connection->commit();
+  }
+
+  public function rollBack(): bool
+  {
+    return $this->connection->rollBack();
+  }
 }

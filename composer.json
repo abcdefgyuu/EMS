@@ -1,0 +1,16 @@
+{
+    "name": "user/ems",
+    "autoload": {
+        "psr-4": {
+            "User\\Ems\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Aamatar"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^7.0"
+    }
+}

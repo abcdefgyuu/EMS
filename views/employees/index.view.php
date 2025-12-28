@@ -44,7 +44,7 @@ $position = $_GET['position'] ?? '';
             <th>Role</th>
             <th>Email</th>
             <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'Admin'): ?>
-            <th>Actions</th>
+              <th>Actions</th>
             <?php endif; ?>
           </tr>
         </thead>
@@ -57,57 +57,29 @@ $position = $_GET['position'] ?? '';
               <td data-label="Position"><?= $employee['position'] ?></td>
               <td data-label="Email"><?= $employee['email'] ?></td>
               <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'Admin'): ?>
-              <td class="flex items-center justify-center">
-                
+                <td class="flex items-center justify-center">
+
                   <a href="/employees/edit?id=<?= $employee['employee_id'] ?>" class="btn btn-edit mr-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
                     </svg>
                   </a>
                   <form action="" method="POST" class="inline-block delete-form">
                     <input type="hidden" name="_method" value="DELETE">
-                     <input type="hidden" name="id" value="<?= $employee['employee_id'] ?>">
+                    <input type="hidden" name="id" value="<?= $employee['employee_id'] ?>">
                     <button type="button" class="btn btn-delete delete-btn" data-employee-name="<?= $employee['name'] ?>"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                       </svg>
                     </button>
                   </form>
                 </td>
-                <?php endif; ?>
+              <?php endif; ?>
             </tr>
           <?php endforeach; ?>
         </tbody>
       </table>
       <!--<div class="pagination" id="pagination"></div>-->
-      <!-- pagination -->
-      <div class="m-4 flex justify-center space-x-2">
-        <!-- Previous Button -->
-        <?php if ($currentPage > 1): ?>
-          <a href="/employees?page=<?= $currentPage - 1 ?>" class="px-3 py-1 border rounded bg-white text-indigo-600 duration-400 hover:bg-indigo-600 hover:text-white">‹</a>
-        <?php endif; ?>
-
-        <!-- Page Numbers -->
-        <?php
-        $maxVisible = 3;
-        for ($i = 1; $i <= $totalPages; $i++) {
-          if (
-            $i == 1 ||
-            $i == $totalPages ||
-            ($i >= $currentPage - 1 && $i <= $currentPage + 1)
-          ) {
-            echo '<a href="/employees?page=' . $i . '" class="px-3 py-1 border rounded duration-400 ' . ($i == $currentPage ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 hover:bg-indigo-600 hover:text-white') . '">' . $i . '</a>';
-          } elseif ($i == 2 && $currentPage > 4) {
-            echo '<span class="px-3 py-1">...</span>';
-          } elseif ($i == $totalPages - 1 && $currentPage < $totalPages - 3) {
-            echo '<span class="px-3 py-1">...</span>';
-          }
-        }
-        ?>
-
-        <!-- Next Button -->
-        <?php if ($currentPage < $totalPages): ?>
-          <a href="/employees?page=<?= $currentPage + 1 ?>" class="px-3 py-1 border rounded bg-white text-indigo-600 duration-400 hover:bg-indigo-600 hover:text-white">›</a>
-        <?php endif; ?>
-      </div>
+      <!-- Pagination -->
+      <?php pagination($currentPage, $totalPages, '/employees'); ?>
 
     </div>
 
@@ -122,10 +94,10 @@ $position = $_GET['position'] ?? '';
 
 
 <script>
-function applyFilters() {
+  function applyFilters() {
     const search = document.getElementById('searchEmployee').value;
-    const dept   = document.getElementById('departmentFilter').value;
-    const pos    = document.getElementById('positionFilter').value;
+    const dept = document.getElementById('departmentFilter').value;
+    const pos = document.getElementById('positionFilter').value;
 
     const params = new URLSearchParams();
 
@@ -136,39 +108,39 @@ function applyFilters() {
     params.set("page", 1);
 
     window.location = "?" + params.toString();
-}
+  }
 
-function resetFilters() {
+  function resetFilters() {
     document.getElementById('searchEmployee').value = '';
     document.getElementById('departmentFilter').value = '';
     document.getElementById('positionFilter').value = '';
     window.location = '/employees';
-}
+  }
 
-// --- SEARCH ONLY ON ENTER ---
-document.getElementById('searchEmployee').addEventListener('keyup', (e) => {
+  // --- SEARCH ONLY ON ENTER ---
+  document.getElementById('searchEmployee').addEventListener('keyup', (e) => {
     if (e.key === "Enter") {
-        applyFilters();
+      applyFilters();
     }
-});
+  });
 
-// --- FILTERS APPLY IMMEDIATELY ---
-document.getElementById('departmentFilter').addEventListener('change', applyFilters);
-document.getElementById('positionFilter').addEventListener('change', applyFilters);
+  // --- FILTERS APPLY IMMEDIATELY ---
+  document.getElementById('departmentFilter').addEventListener('change', applyFilters);
+  document.getElementById('positionFilter').addEventListener('change', applyFilters);
 
-// --- RESET BUTTON ---
-document.getElementById('resetBtn').addEventListener('click', resetFilters);
+  // --- RESET BUTTON ---
+  document.getElementById('resetBtn').addEventListener('click', resetFilters);
 
-// --- DELETE CONFIRMATION ---
-document.querySelectorAll('.delete-btn').forEach(btn => {
+  // --- DELETE CONFIRMATION ---
+  document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const employeeName = btn.getAttribute('data-employee-name');
-        if (confirm(`Are you sure you want to delete "${employeeName}"?`)) {
-            btn.closest('.delete-form').submit();
-        }
+      e.preventDefault();
+      const employeeName = btn.getAttribute('data-employee-name');
+      if (confirm(`Are you sure you want to delete "${employeeName}"?`)) {
+        btn.closest('.delete-form').submit();
+      }
     });
-});
+  });
 </script>
 
 
