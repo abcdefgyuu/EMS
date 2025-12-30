@@ -44,3 +44,4 @@ $router->post('/leave', 'controllers/leave/store.php');
 $router->post('/leave/approve', 'controllers/admin/leave/approve.php');
 
 $router->get('/reset-password', 'controllers/profile/reset.php')->only('auth');
+$router->post('/reset-password', 'controllers/profile/change.php');
